@@ -90,31 +90,35 @@ const initialHistoryList = [
 
 export default function App() {
 
-  const [search, setSearch] = useState(initialHistoryList)
-  const [input, setInput] = useState('')
+  const [searchInput, setSearchInput] = React.useState(initialHistoryList)
+  const [suggestedInput, setSuggestedInput] = React.useState('')
 
-  const updateSuggestions = ({text}) => {
-     return setSearch(initialHistoryList.filter((item) => item.title.toLowerCase().includes(text)))
-    // setSearch(keyword)
+  const enterText = (text) => {
+    setSearchInput(initialHistoryList.filter((item) => item.title.toLowerCase().includes(text.toLowerCase())))
+    setSuggestedInput(initialHistoryList)
   }
 
-  // const updateSearch = ({text}) => {
-  //   setInput(text)
-  // }
+  const updateSuggestions = ({title}) => {
+    setSearchInput(initialHistoryList.filter((item) => item.title.toLowerCase().includes(title.toLowerCase())))
+    setSuggestedInput(title)
+  }
+
+  const deleteItem = (id) => {
+    setSearchInput(searchInput.filter((item) => item.id !== id))
+  }
 
 
   return (
     <View style={{paddingTop: 50}}>
-      <Text>{input}</Text>
       <View style={{backgroundColor: 'blue', flexDirection: 'row', alignItems: 'center', paddingVertical: 8, justifyContent: 'space-around'}}>
       <Image source={{uri: 'https://assets.ccbp.in/frontend/react-js/history-website-logo-img.png'}} style={{height: 15, width: 60}} />
-      <TextInput onChangeText={updateSuggestions} style={{borderWidth: 1, width: 200, height: 40, borderRadius: 6,}} />
+      <TextInput value={suggestedInput} onChangeText={enterText} style={{borderWidth: 1, width: 200, height: 40, borderRadius: 6,}} />
       </View>
       <View>
             <FlatList
-             data={search}
+             data={searchInput}
              renderItem={({item}) => (
-               <HistoryItems browse={item} />
+               <HistoryItems browse={item} deleteItem={deleteItem} />
           )} />
       </View>
     </View>
